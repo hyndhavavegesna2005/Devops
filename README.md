@@ -6,7 +6,7 @@ This is a basic Python project containing a main script and unit tests.
 
 - `main.py`: The main application script.
 - `test_main.py`: Unit tests for the application.
-- `Jenkinsfile`: CI/CD configuration for Jenkins.
+- `Jenkinsfile`: CI/CD configuration for Jenkins
 
 ## Usage
 
