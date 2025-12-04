@@ -1,11 +1,5 @@
 pipeline {
-    agent {
-        docker {
-            // Python image for the build environment
-            image 'python:3.12-slim'
-            args '-u root:root'
-        }
-    }
+    agent any
 
     options {
         timestamps()
@@ -20,20 +14,19 @@ pipeline {
 
         stage('Install dependencies') {
             steps {
-                sh '''
+                bat '''
                   python --version
-                  if [ -f requirements.txt ]; then
+                  if exist requirements.txt (
                     pip install --upgrade pip
-                    pip install -r requirements.txt || true
-                  fi
+                    pip install -r requirements.txt
+                  )
                 '''
             }
         }
 
         stage('Run unit tests (CI)') {
             steps {
-                sh '''
-                  # Run your unittest-based tests
+                bat '''
                   python -m unittest -v test_main.py
                 '''
             }
@@ -41,20 +34,18 @@ pipeline {
 
         stage('Build package') {
             steps {
-                sh '''
-                  mkdir -p dist
-                  # Package your exact files as the build artifact
-                  tar -czf dist/calculator-package.tar.gz main.py test_main.py
+                bat '''
+                  if not exist dist mkdir dist
+                  tar -czf dist\\calculator-package.tar.gz main.py test_main.py
                 '''
             }
         }
 
         stage('Deploy (local CD)') {
             steps {
-                sh '''
-                  # Simulated deployment: copy artifact to deploy folder
-                  mkdir -p deploy
-                  cp dist/calculator-package.tar.gz deploy/
+                bat '''
+                  if not exist deploy mkdir deploy
+                  copy /Y dist\\calculator-package.tar.gz deploy\\
                 '''
                 archiveArtifacts artifacts: 'dist/*.tar.gz', fingerprint: true
             }
@@ -63,8 +54,6 @@ pipeline {
 
     post {
         always {
-            // If you later generate JUnit xml from unittest, you can reference it here
-            // junit allowEmptyResults: true, testResults: '**/test-results.xml'
             echo 'Pipeline finished (success or failure).'
         }
     }
