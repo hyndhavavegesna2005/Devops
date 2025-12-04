@@ -12,31 +12,13 @@ pipeline {
             }
         }
 
-        stage('Install dependencies') {
+        stage('CI in Docker (tests + build)') {
             steps {
                 bat '''
-                  python --version
-                  if exist requirements.txt (
-                    pip install --upgrade pip
-                    pip install -r requirements.txt
-                  )
-                '''
-            }
-        }
-
-        stage('Run unit tests (CI)') {
-            steps {
-                bat '''
-                  python -m unittest -v test_main.py
-                '''
-            }
-        }
-
-        stage('Build package') {
-            steps {
-                bat '''
-                  if not exist dist mkdir dist
-                  tar -czf dist\\calculator-package.tar.gz main.py test_main.py
+                  docker run --rm ^
+                    -v "%cd%":/app ^
+                    -w /app ^
+                    python:3.12-slim sh -c "pip install --upgrade pip && pip install -r requirements.txt || true && python -m unittest -v test_main.py && mkdir -p dist && tar -czf dist/calculator-package.tar.gz main.py test_main.py"
                 '''
             }
         }
