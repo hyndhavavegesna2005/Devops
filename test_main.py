@@ -24,7 +24,7 @@ class TestCalc(unittest.TestCase):
 
     def test_mul(self):
         result = self.calc.mul(1,2)
-        self.assertEqual(result, 3)
+        self.assertEqual(result, 2)
 
     def test_div(self):
         result = self.calc.div(1,2)
