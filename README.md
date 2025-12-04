@@ -8,6 +8,10 @@ This is a basic Python project containing a main script and unit tests.
 - `test_main.py`: Unit tests for the application.
 - `Jenkinsfile`: CI/CD configuration for Jenkins
 
+## Requirements
+
+- Python 3.x
+
 ## Usage
 
 To run the main script:
